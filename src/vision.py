@@ -11,9 +11,13 @@ def extract_text_from_image(image: Image.Image) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     
     prompt = (
-        "Por favor, transcreva e extraia todo o texto e informações contidas "
-        "nesta imagem, de forma exata e como estão estruturadas. "
-        "Retorne APENAS o texto bruto da sua transcrição, sem adicionar outros comentários."
+        "Você é um especialista em ler anotações manuscritas (caligrafia difícil). "
+        "Transcreva o texto da imagem de forma inteligente: "
+        "Use o contexto para deduzir corretamente as palavras, corrigindo distorções visuais "
+        "e formando frases que façam sentido (ex: palavras como 'reformar box acrílico' em vez de letras truncadas). "
+        "IMPORTANTE: Você tem PERMISSÃO para corrigir palavras pelo contexto, MAS É PROIBIDO "
+        "alterar NÚMEROS (ex: se na imagem está 412, mantenha estritamente 412). "
+        "Retorne APENAS o texto bruto da transcrição, sem adicionar comentários ou introduções."
     )
     
     # Chamada para a API usando o novo padrão (recomendando gemini-2.5-flash)
