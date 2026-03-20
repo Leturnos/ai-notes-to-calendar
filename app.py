@@ -16,7 +16,7 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Imagem carregada", width="stretch")
     
-    # Botão básico
+    # Botão básico para processar
     if st.button("Processar Imagem"):
         with st.spinner("Extraindo texto e processando tarefas..."):
             try:
@@ -26,18 +26,26 @@ if uploaded_file is not None:
                 # 2. Parser: Transforma o texto bruto para JSON (Lista de Tarefas)
                 json_tarefas = parse_text_to_tasks(texto_bruto)
                 
-                st.success("Mágica realizada com sucesso!")
+                # Salvando o resultado para liberar o próximo botão da interface
+                st.session_state.tarefas_parseadas = json_tarefas
+                st.session_state.texto_bruto = texto_bruto
                 
-                # Layout e Visualização (Coluna 1: Texto Bruto | Coluna 2: JSON)
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.subheader("Transcrição:")
-                    st.text_area("Resultado", texto_bruto, height=300, label_visibility="collapsed")
-                
-                with col2:
-                    st.subheader("JSON de Tarefas:")
-                    st.json(json_tarefas)
-                    
+                st.success("Mágica realizada com sucesso! Verifique os dados abaixo e adicione à agenda.")
             except Exception as e:
                 st.error(f"Ocorreu um erro: {e}")
+
+# Renderização do Resultado (ocorre independente se processou agora ou estava em cache)
+if st.session_state.tarefas_parseadas:
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Transcrição:")
+        st.text_area("Resultado", st.session_state.texto_bruto, height=300, label_visibility="collapsed")
+    
+    with col2:
+        st.subheader("JSON de Tarefas:")
+        st.json(st.session_state.tarefas_parseadas)
+
+    st.divider()
+    
+    
