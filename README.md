@@ -37,3 +37,10 @@ Este projeto tem como objetivo praticar:
 * Processamento de dados com IA
 * Autenticação OAuth
 * Desenvolvimento backend em Python
+
+## ⚙️ Configuração
+
+Crie um arquivo `.env` baseado no `.env.example`:
+
+```bash
+cp .env.example .env
