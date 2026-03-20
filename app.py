@@ -2,8 +2,13 @@ import streamlit as st
 from PIL import Image
 from src.vision import extract_text_from_image
 from src.parser import parse_text_to_tasks
+from src.calendar_api import add_event_to_calendar
 
 st.set_page_config(page_title="Notes to Calendar", layout="centered")
+
+# Variável de estado para reter as tarefas e não sumir a tela se recarregar
+if "tarefas_parseadas" not in st.session_state:
+    st.session_state.tarefas_parseadas = None
 
 st.title("Upload de Anotações para a Agenda")
 st.write("Faça o upload de uma imagem com as suas anotações para processarmos e adicionarmos à sua agenda.")
@@ -48,4 +53,18 @@ if st.session_state.tarefas_parseadas:
 
     st.divider()
     
-    
+    # 3. Integração com Agenda
+    st.subheader("Ações Finais")
+    if st.button("Adicionar Todas as Tarefas à Agenda"):
+        with st.spinner("Autenticando e gerando eventos no Google Calendar..."):
+            tarefa_list = st.session_state.tarefas_parseadas.get('tasks', [])
+            
+            if not tarefa_list:
+                st.warning("Nenhuma tarefa mapeada pelo nosso modelo.")
+            else:
+                for t in tarefa_list:
+                    link_evento = add_event_to_calendar(t)
+                    if link_evento:
+                        st.success(f"Agenda: Evento '{t.get('title')}' criado com sucesso! [Ver Agenda]({link_evento})")
+                    else:
+                        st.error(f"Agenda: Não foi possível criar '{t.get('title')}'. Verifique logs do terminal.")
