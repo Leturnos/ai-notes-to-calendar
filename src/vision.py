@@ -2,17 +2,12 @@ from google import genai
 from PIL import Image
 from src.config import GEMINI_API_KEY
 
-def extract_text_from_image(image: Image.Image) -> str:
-    """
-    Recebe uma imagem (PIL Image), envia para o modelo Gemini
-    e retorna o texto bruto extraído da imagem.
-    """
-    # Inicializando o cliente da nova versão do SDK
+def extract_text_from_images(images: list[Image.Image]) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     
     prompt = (
         "Você é um especialista em ler anotações manuscritas (caligrafia difícil). "
-        "Transcreva o texto da imagem de forma inteligente: "
+        "Transcreva o texto da(s) imagem(ns) de forma inteligente: "
         "Use o contexto para deduzir corretamente as palavras, corrigindo distorções visuais "
         "e formando frases que façam sentido (ex: palavras como 'reformar box acrílico' em vez de letras truncadas). "
         "IMPORTANTE: Você tem PERMISSÃO para corrigir palavras pelo contexto, MAS É PROIBIDO "
@@ -20,10 +15,9 @@ def extract_text_from_image(image: Image.Image) -> str:
         "Retorne APENAS o texto bruto da transcrição, sem adicionar comentários ou introduções."
     )
     
-    # Chamada para a API usando o novo padrão (recomendando gemini-2.5-flash)
     response = client.models.generate_content(
         model='gemini-2.5-flash',
-        contents=[prompt, image]
+        contents=[prompt] + images
     )
     
     return response.text
