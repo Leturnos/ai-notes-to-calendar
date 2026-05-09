@@ -10,7 +10,20 @@ st.set_page_config(page_title="Notes to Calendar", layout="centered")
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap');
-        html, body, [class*="st-"], .stApp, p, span, h1, h2, h3, div {
+        
+        html, body, .stApp {
+            font-family: 'Geist', sans-serif !important;
+        }
+        
+        p, h1, h2, h3, h4, h5, h6 {
+            font-family: 'Geist', sans-serif !important;
+        }
+
+        .stButton button, .stTextInput input, .stTextArea textarea {
+            font-family: 'Geist', sans-serif !important;
+        }
+
+        .stMarkdown span, .stText span, .stAlert span {
             font-family: 'Geist', sans-serif !important;
         }
     </style>
@@ -45,10 +58,10 @@ if uploaded_files:
     
     if st.session_state.parsed_tasks or st.session_state.is_completed:
         with st.expander("🖼️ Ver as imagens enviadas (Oculto para economizar espaço)", expanded=False):
-            st.image(images, caption=[f"Imagem {i+1}" for i in range(len(images))], width="stretch")
+            st.image(images, caption=[f"Imagem {i+1}" for i in range(len(images))])
     else:
-        st.image(images, caption=[f"Imagem {i+1}" for i in range(len(images))], width="stretch")
-        if st.button("Processar Imagens", type="primary", use_container_width=True):
+        st.image(images, caption=[f"Imagem {i+1}" for i in range(len(images))])
+        if st.button("Processar Imagens", type="primary", width="stretch"):
             with st.spinner("Extraindo texto e processando tarefas..."):
                 try:
                     raw_text = extract_text_from_images(images)
@@ -66,7 +79,7 @@ if uploaded_files:
 if st.session_state.is_completed:
     st.success("🎉 Tudo certo! Sua agenda foi atualizada com os novos eventos.")
     st.balloons()
-    if st.button("🔄 Processar Nova Anotação", type="primary", use_container_width=True):
+    if st.button("🔄 Processar Nova Anotação", type="primary", width="stretch"):
         reset_app()
         
 elif st.session_state.parsed_tasks:
@@ -86,7 +99,7 @@ elif st.session_state.parsed_tasks:
     edited_tasks = st.data_editor(
         current_tasks,
         num_rows="dynamic",
-        use_container_width=True,
+        width="stretch",
         column_config={
             "title": st.column_config.TextColumn("Título", required=True),
             "description": st.column_config.TextColumn("Descrição"),
@@ -101,7 +114,7 @@ elif st.session_state.parsed_tasks:
     st.subheader("Ações Finais")
     st.info("Ao clicar no botão abaixo, iremos autenticar no Google. Caso seja seu primeiro acesso, uma página de login abrirá automaticamente.", icon="💡")
     
-    if st.button("Adicionar Todas as Tarefas à Agenda 🗓️", type="primary", use_container_width=True):
+    if st.button("Adicionar Todas as Tarefas à Agenda 🗓️", type="primary", width="stretch"):
         with st.spinner("Autenticando e gerando eventos no Google Calendar..."):
             tasks_to_add = st.session_state.parsed_tasks.get('tasks', [])
             
