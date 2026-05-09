@@ -53,7 +53,12 @@ def parse_text_to_tasks(raw_text: str) -> dict:
     
     # Transforma e retorna o JSON
     try:
-        return json.loads(response.text)
+        data = json.loads(response.text)
+        # Validação extra para garantir que o formato está correto
+        if "tasks" not in data:
+            return {"tasks": []}
+        return data
     except Exception as e:
-        print(f"Erro ao converter retorno para dicionário do Python: {e}")
+        print(f"Erro ao processar JSON de tarefas: {e}")
+        # Retorna uma estrutura válida vazia para não quebrar o data_editor no frontend
         return {"tasks": []}

@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from PIL import Image
+from google.genai import errors as genai_errors
 from src.vision import extract_text_from_images
 from src.parser import parse_text_to_tasks
 from src.calendar_api import add_event_to_calendar
@@ -73,8 +74,13 @@ if uploaded_files:
                     st.session_state.is_completed = False
                     
                     st.rerun()
+                except genai_errors.ClientError as e:
+                    if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                        st.error("🚨 Limite de cota atingido! O Google Gemini (IA) recebeu muitas requisições. Aguarde um minuto e tente novamente.")
+                    else:
+                        st.error(f"Erro na IA do Google: {e}")
                 except Exception as e:
-                    st.error(f"Ocorreu um erro: {e}")
+                    st.error(f"Ocorreu um erro inesperado: {e}")
 
 if st.session_state.is_completed:
     st.success("🎉 Tudo certo! Sua agenda foi atualizada com os novos eventos.")
